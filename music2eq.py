@@ -2,8 +2,7 @@ import py_midicsv as pm
 import pandas
 import re
 
-x = {}
-y = {}
+
 miditestfile = 'cherry-ripe-piano-solo.mid'
 pattern = re.compile(r'2, (\d+), Note_on_c, \d+, (\d+), (\d+)')
 
@@ -61,13 +60,24 @@ def len_lists_of_lists(list):
     print(f'y = {len(list[1])} x = {len(list[0])}')
 
 
-
+def scale_velocity(list):
+    new_list = []
+    for i in list:
+        val = ((int(i[2])/127)-0.5)*2
+        result = [int(i[0]), int(i[1]), val]
+        new_list.append(result)
+    return new_list
+            
+            
+    
+    
 def thing():
     converted = convert_midi2list(miditestfile)
     parsed_list = parse_list(converted)
     split_lists = splitter(parsed_list)
-    len_lists_of_lists(split_lists)
-    
+    #len_lists_of_lists(split_lists)
+    scaled_x = scale_velocity(split_lists[0])
+    scaled_y = scale_velocity(split_lists[1])
 
 
 thing()
