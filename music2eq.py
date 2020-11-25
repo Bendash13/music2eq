@@ -49,7 +49,7 @@ def splitter(list):
     x = []
     y = []
     for item in list:
-        if int(item[1]) >= 60:
+        if int(item[1]) >= 58:
             y.append(item)
         else:
             x.append(item)
@@ -57,13 +57,16 @@ def splitter(list):
         
 # scale velocity to correct scaling for converter
 
+def len_lists_of_lists(list):
+    print(f'y = {len(list[1])} x = {len(list[0])}')
+
 
 
 def thing():
     converted = convert_midi2list(miditestfile)
     parsed_list = parse_list(converted)
     split_lists = splitter(parsed_list)
-    print(f'y = {len(split_lists[1])} x = {len(split_lists[0])}')
+    len_lists_of_lists(split_lists)
     
 
 
