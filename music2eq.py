@@ -1,5 +1,6 @@
 import py_midicsv as pm
-import pandas
+import pandas as pd
+from csv import reader
 import re
 
 
@@ -12,9 +13,17 @@ def convert_midi2list(filename):
     return csv_string
 
 # pulls out the csv file - potentially take out
-def convert_midi2csv():
-    df = pandas.DataFrame(data={"col1": csv_string})
-    df.to_csv('./midi.csv', sep=',',index=False)
+def convert_list2listolists(csv_string):
+    listolists = []
+    for bit in csv_string:
+        bit = bit.strip('\n')
+        a = bit.split(',')
+        listolists.append(a)
+#    df = pd.DataFrame([x.split(',') for x in csv_string.split('/n')])
+#    
+#    df.to_csv('./midi.csv', sep=',',index=False)
+return listolists
+
 
 def checker(string, list):
     tcount = 0 # counts if the string is present
@@ -74,20 +83,52 @@ def scale_velocity(list):
     return new_list
             
             
+def pdscale(val):
+    return ((val/127)-0.5)*40
     
+            
+def convert2dataframe(listolists):
+    df = pd.DataFrame.from_records(listolists, columns=['time', 'pitch', 'velocity'])    
+#    df = pd.DataFrame.from_records(listolists, columns=['section', 'time', 'command', 'channel', 'pitch', 'velocity', 'other'])
+    return df
     
 def thing():
-    # converts midi to list/csv
     converted = convert_midi2list(miditestfile)
-    # find time, pitch and velocity
-    parsed_list, pitches = parse_list(converted)
-    # finds the central pitch to split the song
-    centre = centre_pitch(pitches)
-    # splits the song based on the found central pitch
-    split_lists = splitter(parsed_list, centre)
+    parsed_list = parse_list(converted)
+    split_lists = splitter(parsed_list)
     #len_lists_of_lists(split_lists)
     scaled_x = scale_velocity(split_lists[0])
     scaled_y = scale_velocity(split_lists[1])
 
-
-thing()
+def thing2():
+    converted = convert_midi2list(miditestfile)
+    parsed_list = parse_list(converted)
+    df = convert2dataframe(parsed_list)
+#    df = df.drop(df[df.velocity == 0].index)
+    df = df[df.velocity != 0]
+    df.velocity = df.velocity.apply(pdscale)
+    x = df[df.pitch >= 58]
+    y = df[df.pitch < 58]
+    x = x.groupby('time', as_index=False).mean()
+    y = y.groupby('time', as_index=False).mean()
+    statx = x.describe()
+    staty = y.describe()
+    print(statx)
+    print(staty)
+   
+    
+def integerer(x):
+    return int(x)
+    
+    
+def tester():
+    converted = convert_midi2list(miditestfile)
+    df = convert_list2listolists(converted)
+    df = convert2dataframe(df)
+    df.velocity = df[df.velocity != None]
+    df.velocity = df.velocity.apply(integerer)
+    df = df[df.velocity != 0]
+    
+    
+    
+    thing2()
