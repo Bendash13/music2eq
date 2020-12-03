@@ -102,7 +102,7 @@ def scale_velocity(list):
 
 
 def pdscale(val):
-    return ((val/127)-0.5)*40
+    return ((val/127)*50)
     
             
 def convert2dataframe(listolists):
